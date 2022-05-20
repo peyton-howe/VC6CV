@@ -12,5 +12,4 @@ OpenGL is easy to implement and, given examples, relatively painless. However, y
 ### Examples?
 There are some clean examples on how to use both the GL and QPU way. Look into Commands.txt for example commands to invoke these examples.
 #### GL
-1. GLCV (main_gl): Simple program executing only a simple shader blitting the camera frame to the screen. Supports all color spaces (Y,YUV,RGB), and scales the frame to fit the screen.
-2. GLBlobs (main_gl_blobs): Executes a two-pass blob-detection shader on the image, resulting in a binary full-resolution image. Also includes a simple CPU-side connected component labeling algorithm (fast, but does not merge close-by components, so large blobs might have smaller satellite blobs around it).
+1. GLCV (main_gl): Simple program executing only a simple shader blitting the camera frame to the screen. Supports the YUV color space and scales the frame to fit the screen.
