@@ -105,6 +105,7 @@ int main(int argc, char **argv)
 	
 	printf("Creating Window \n");
 	
+	//Create Window
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -149,11 +150,16 @@ int main(int argc, char **argv)
         {
             for (float y = -1, b = 0; y <= 1, b <= 1; y+= 2/N, b+= 1/N)
             {
-	    	vertices.push_back((float)(x));
-		vertices.push_back((float)(y));
-		vertices.push_back((float)(z));
-		vertices.push_back((float)(a));
-		vertices.push_back((float)(b));
+	    	float theta = atan2(y, x);
+		float r = sqrt(x*x + y*y);
+		r = r -0.15*pow(r, 3.0) + 0.01*pow(r, 5.0);
+		vertices.push_back(r*cos(theta));
+		vertices.push_back(r*sin(theta));
+		//vertices.push_back(x);
+		//vertices.push_back(y);
+		vertices.push_back(z);
+		vertices.push_back(a);
+		vertices.push_back(b);
             }
         
         }
@@ -171,8 +177,6 @@ int main(int argc, char **argv)
             	indices.push_back((short)(offset+ (N+1) + 1));
         	}
     	}
-	
-	//Put distortion code here?
     
     	//Debugging info, will print out the indices, vertices, and how many of each there are
     
@@ -189,17 +193,6 @@ int main(int argc, char **argv)
 	//std::cout << '\n' << indicesCount << '\n';
 	
 	SSQuad = new Mesh ({ POS, TEX }, vertices, indices);
-	
-        /*//Original Mesh
-	// Create screen-space quad for rendering
-	SSQuad = new Mesh ({ POS, TEX }, {
-		-1,  1, 0, 0, 1,
-		 1,  1, 0, 1, 1,
-		-1, -1, 0, 0, 0,
-		 1,  1, 0, 1, 1,
-		 1, -1, 0, 1, 0,
-		-1, -1, 0, 0, 0,
-	}, {});*/
 
 	// Load shaders
 	shaderCamBlitRGB = new ShaderProgram("../gl_shaders/CamES/vert.glsl", "../gl_shaders/CamES/frag_camRGB.glsl");
