@@ -45,14 +45,9 @@ set(VC6CV_GL_LIBRARIES
 	${LIB_BEGL} ${LIB_GLES})
 
 # Grouped targets
-add_custom_target(gl DEPENDS GLCV GLBlobs)
+add_custom_target(gl DEPENDS GLCV)
 
 # GL CV sample application
 add_executable(GLCV ${VC6CV_GL_SOURCES} main_gl.cpp)
 target_link_libraries(GLCV ${VC6CV_LIBRARIES} ${VC6CV_GL_LIBRARIES})
 target_include_directories(GLCV PRIVATE gl camera)
-
-# GL blob tracking application
-add_executable(GLBlobs ${VC6CV_GL_SOURCES} main_gl_blobs.cpp gl_blobs/blobdetection.cpp)
-target_link_libraries(GLBlobs ${VC6CV_LIBRARIES} ${VC6CV_GL_LIBRARIES})
-target_include_directories(GLBlobs PRIVATE gl gl_blobs camera)
