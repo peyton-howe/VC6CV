@@ -7,6 +7,11 @@
 #include <chrono>
 #include <termios.h>
 
+#include <SDL2/SDL.h>
+#include <map>
+#include <iostream>
+#include <fstream>
+
 #include "applog.h"
 
 #include "bcm_host.h"
@@ -37,6 +42,10 @@ static void setConsoleRawMode();
 static void processCameraFrame(CamGL_Frame *frame);
 static void processCameraFrame(CamGL_Frame *frame1);
 static void bindExternalTexture(GLuint adr, GLuint tex, int slot);
+
+SDL_Window *window;
+SDL_GLContext gl_context;
+SDL_Event event;
 
 int main(int argc, char **argv)
 {
@@ -96,15 +105,30 @@ int main(int argc, char **argv)
 	
 	printf("Creating Window \n");
 	
-	// Create native window (not real GUI window)
-	EGL_DISPMANX_WINDOW_T window; //cannot use this!
-	if (createNativeWindow(&window) != 0)
-		return EXIT_FAILURE;
-	dispWidth = window.width;
-	dispHeight = window.height;
-	renderRatioCorrection = (((float)dispHeight / camHeight) * camWidth) / dispWidth;
+	SDL_Init(SDL_INIT_VIDEO);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,1);
 	
-    printf("Created Window \n");
+	window = SDL_CreateWindow(
+		"test",
+		0,
+		0,
+		params.width,
+		params.height,
+		SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN);
+	gl_context=SDL_GL_CreateContext(window);
+	
+	// Create native window (not real GUI window)
+	//EGL_DISPMANX_WINDOW_T window; //cannot use this!
+	//if (createNativeWindow(&window) != 0)
+	//	return EXIT_FAILURE;
+	//dispWidth = window.width;
+	//dispHeight = window.height;
+	//renderRatioCorrection = (((float)dispHeight / camHeight) * camWidth) / dispWidth;
+	
+        printf("Created Window \n");
 
 	// Setup EGL context
 	setupEGL(&eglSetup, (EGLNativeWindowType*)&window);
