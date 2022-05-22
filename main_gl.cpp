@@ -106,11 +106,32 @@ int main(int argc, char **argv)
 	printf("Creating Window \n");
 	
 	//Create Window
-	SDL_Init(SDL_INIT_VIDEO);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,1);
+	//SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);//was: 24, try 0
+	//SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 0);//was: 8, try 0
+	
+	SDL_Init(SDL_INIT_VIDEO);
+	
+	bool IsX11 = true;
+        if(std::strcmp(SDL_GetCurrentVideoDriver(), "x11") == 0)///0 is match
+		 IsX11 = true;
+	else IsX11 = false;
+	
+	SDL_DisplayMode sdl_top_mode;
+	
+	if( SDL_GetDisplayMode(0, 0, &sdl_top_mode) == 0)  /// success
+	{	
+		if(!IsX11) {
+			params.width = sdl_top_mode.w;
+			params.height = sdl_top_mode.h;
+		}
+		
+		printf("Disp Mode: \t%dx%dpx @ %dhz \n", sdl_top_mode.w, sdl_top_mode.h, sdl_top_mode.refresh_rate);
+	}
 	
 	window = SDL_CreateWindow(
 		"test",
@@ -118,8 +139,44 @@ int main(int argc, char **argv)
 		0,
 		params.width,
 		params.height,
-		SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN);
+		SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE);
+	
+	if(window==NULL){
+        	std::cout << "SDL Could not create window: " << SDL_GetError() << '\n';
+      		SDL_Quit();
+      	return 1;
+    	}
+   	SDL_SetHint(SDL_HINT_OPENGL_ES_DRIVER, "1"); /// Seems to work!
+	SDL_SetHint(SDL_HINT_VIDEO_X11_FORCE_EGL, "1"); // 0=glx, "By default SDL will use GLX when both are present."
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengles2"); /// Seems to work and be enough!
+	
+	///SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR
+	///SDL_HINT_VIDEO_DOUBLE_BUFFER
+	///SDL_HINT_KMSDRM_REQUIRE_DRM_MASTER
+	///SDL_HINT_AUTO_UPDATE_JOYSTICKS
+	///test for micro stutter - no improvement, RaspiOS tearing issue?
+	SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
+	SDL_SetHint(SDL_HINT_VIDEO_DOUBLE_BUFFER, "1");
+	
+	SDL_GL_SetSwapInterval(1);
+	
+	printf("SDL_VIDEO_DRIVER selected: %s\n",  SDL_GetCurrentVideoDriver());
+	
 	gl_context=SDL_GL_CreateContext(window);
+	//SDL_GL_MakeCurrent(window, gl_context);
+	
+	//SDL_Renderer* sdl_renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+	//if(sdl_renderer==NULL){
+	//	/// In the event that the window could not be made...
+	//	printf("Could not create renderer: %s\n", SDL_GetError() );
+	//	SDL_Quit();
+	//	return 1;
+	//}
+	
+	//SDL_RendererInfo info;
+	//SDL_GetRendererInfo( sdl_renderer, &info );
+	//printf("SDL_RENDER_DRIVER selected: %s\n", info.name);
+	//SDL_SetRenderDrawBlendMode(sdl_renderer, SDL_BLENDMODE_BLEND);
 	
 	// Create native window (not real GUI window)
 	//EGL_DISPMANX_WINDOW_T window; //cannot use this!
@@ -132,7 +189,7 @@ int main(int argc, char **argv)
         printf("Created Window \n");
 
 	// Setup EGL context
-	setupEGL(&eglSetup, (EGLNativeWindowType*)&window);
+	setupEGL(&eglSetup, (EGLNativeWindowType)&window);
 	glClearColor(0.8f, 0.2f, 0.1f, 1.0f);
 
 	//Print out camera number for logging purposes
