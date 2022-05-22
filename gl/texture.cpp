@@ -1,5 +1,6 @@
 #include "defines.hpp"
 #include "texture.hpp"
+#include "glhelp.h"
 
 #include <iostream>
 
