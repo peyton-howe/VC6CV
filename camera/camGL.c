@@ -345,18 +345,22 @@ static int camGL_processCameraFrame(CamGL *camGL, void *frameBuffer)
 			// Create EGL textures from frame buffers according to format
 			if (camGL->params.format == CAMGL_RGB)
 			{
-				frameInt->eglImageRGB = eglCreateImageKHR(camGL->eglSetup.display, EGL_NO_CONTEXT, EGL_IMAGE_BRCM_MULTIMEDIA, (EGLClientBuffer)frameBuffer, createAttributes);
+				frameInt->eglImageRGB = eglCreateImageKHR(camGL->eglSetup.display, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, NULL, createAttributes);
+				//frameInt->eglImageRGB = eglCreateImageKHR(camGL->eglSetup.display, EGL_NO_CONTEXT, EGL_IMAGE_BRCM_MULTIMEDIA, (EGLClientBuffer)frameBuffer, createAttributes);
 				CHECK_EVAL(frameInt->eglImageRGB != EGL_NO_IMAGE_KHR, "Failed to convert frame buffer to RGB EGL image!", errorKHR);
 			}
 			else
 			{
-				frameInt->eglImageY = eglCreateImageKHR(camGL->eglSetup.display, EGL_NO_CONTEXT, EGL_IMAGE_BRCM_MULTIMEDIA_Y, (EGLClientBuffer)frameBuffer, createAttributes);
+				frameInt->eglImageY = eglCreateImageKHR(camGL->eglSetup.display, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, NULL, createAttributes);
+				//frameInt->eglImageY = eglCreateImageKHR(camGL->eglSetup.display, EGL_NO_CONTEXT, EGL_IMAGE_BRCM_MULTIMEDIA_Y, (EGLClientBuffer)frameBuffer, createAttributes);
 				CHECK_EVAL(frameInt->eglImageY != EGL_NO_IMAGE_KHR, "Failed to convert frame buffer to Y EGL image!", errorKHR);
 				if (camGL->params.format == CAMGL_YUV)
 				{
-					frameInt->eglImageU = eglCreateImageKHR(camGL->eglSetup.display, EGL_NO_CONTEXT, EGL_IMAGE_BRCM_MULTIMEDIA_U, (EGLClientBuffer)frameBuffer, createAttributes);
+					frameInt->eglImageU = eglCreateImageKHR(camGL->eglSetup.display, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, NULL, createAttributes);
+					//frameInt->eglImageU = eglCreateImageKHR(camGL->eglSetup.display, EGL_NO_CONTEXT, EGL_IMAGE_BRCM_MULTIMEDIA_U, (EGLClientBuffer)frameBuffer, createAttributes);
 					CHECK_EVAL(frameInt->eglImageU != EGL_NO_IMAGE_KHR, "Failed to convert frame buffer to U EGL image!", errorKHRU);
-					frameInt->eglImageV = eglCreateImageKHR(camGL->eglSetup.display, EGL_NO_CONTEXT, EGL_IMAGE_BRCM_MULTIMEDIA_V, (EGLClientBuffer)frameBuffer, createAttributes);
+					frameInt->eglImageV = eglCreateImageKHR(camGL->eglSetup.display, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, NULL, createAttributes);
+					//frameInt->eglImageV = eglCreateImageKHR(camGL->eglSetup.display, EGL_NO_CONTEXT, EGL_IMAGE_BRCM_MULTIMEDIA_V, (EGLClientBuffer)frameBuffer, createAttributes);
 					CHECK_EVAL(frameInt->eglImageV != EGL_NO_IMAGE_KHR, "Failed to convert frame buffer to V EGL image!", errorKHRV);
 				}
 			}
