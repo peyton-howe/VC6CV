@@ -5,6 +5,7 @@
 
 #include "gcs.h"
 #include "camGL.h"
+#include "glhelp.h"
 
 #include <GLES3/gl3.h>
 #include <GLES2/gl2ext.h>
